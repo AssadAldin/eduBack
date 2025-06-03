@@ -22,7 +22,7 @@ class LessonsController extends Controller
             'course_id' => 'required|exists:courses,id',
         ]);
 
-        $mediaPath = $request->file('media')->store('lessons/media', 'public');
+        $mediaPath = $request->file('media')->store('lessons');
         $validated['media'] = $mediaPath;
 
         $lesson = Lesson::create($validated);
@@ -47,7 +47,7 @@ class LessonsController extends Controller
         ]);
 
         if ($request->hasFile('media')) {
-            $mediaPath = $request->file('media')->store('lessons/media', 'public');
+            $mediaPath = $request->file('media')->store('lessons');
             $validated['media'] = $mediaPath;
         }
 
