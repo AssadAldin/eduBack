@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LessonsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -23,4 +24,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->get('/users', [UsersController::class, 'index']);
 Route::middleware('auth:sanctum')->apiResource('courses', CourseController::class);
-
+Route::middleware('auth:sanctum')->apiResource('lessons', LessonsController::class);
