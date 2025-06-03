@@ -21,6 +21,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Course management routes
+    // Add user to course and remove user from course routes
+    Route::post('/courses/{course}/add-user', [CourseController::class, 'addUserToCourse']);
+    Route::post('/courses/{course}/remove-user', [CourseController::class, 'removeUserFromCourse']);
+
 });
 
 Route::middleware('auth:sanctum')->get('/users', [UsersController::class, 'index']);

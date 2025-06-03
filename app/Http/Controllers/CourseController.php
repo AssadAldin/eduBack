@@ -4,13 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class CourseController extends Controller
 {
-    public function index()
+
+    public function __construct()
     {
-        return response()->json(Course::with('user')->get());
+        $this->middleware('course.enrolled')->only('show');
     }
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        $courses = Course::with('user', 'users')
+            ->withCount('lessons')
+            ->get()
+            ->map(function ($course) use ($user) {
+                $course->is_student = $course->users->contains($user->id);
+                unset($course->users);
+                return $course;
+            });
+
+        return response()->json($courses);
+    }
+
+
 
     public function store(Request $request)
     {
@@ -49,5 +68,27 @@ class CourseController extends Controller
     {
         $course->delete();
         return response()->json(['message' => 'Course deleted successfully']);
+    }
+
+    public function addUserToCourse(Request $request, Course $course)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $course->users()->syncWithoutDetaching($validated['user_id']);
+
+        return response()->json(['message' => 'User added to course.']);
+    }
+
+    public function removeUserFromCourse(Request $request, Course $course)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $course->users()->detach($validated['user_id']);
+
+        return response()->json(['message' => 'User removed from course.']);
     }
 }
