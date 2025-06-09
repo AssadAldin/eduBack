@@ -56,6 +56,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Frontend URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used to generate links for email verification and other
+    | frontend-related functionalities. It should point to the frontend
+    | application that interacts with this backend API.
+    |--------------------------------------------------------------------------
+    */
+
+    'frontend_url' => env('FRONTEND_URL', 'http://localhost:8080'),
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

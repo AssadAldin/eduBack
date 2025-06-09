@@ -23,9 +23,13 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password']),
         ]);
 
+        // Send verification email
+        $user->sendEmailVerificationNotification();
+
         $token = $user->createToken('mobile-token')->plainTextToken;
 
         return response()->json([
+            'message' => 'Registration successful. Please verify your email.',
             'user' => $user,
             'token' => $token,
         ], 201);
@@ -40,11 +44,15 @@ class AuthController extends Controller
 
         $user = User::where('email', $fields['email'])->first();
 
-        if (! $user || ! Hash::check($fields['password'], $user->password)) {
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
+
+        // if (!$user->hasVerifiedEmail()) {
+        //     return response()->json(['message' => 'Please verify your email address.'], 403);
+        // }
 
         $token = $user->createToken('mobile-token')->plainTextToken;
 
