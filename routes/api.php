@@ -17,11 +17,13 @@ Route::get('/test', function () {
     return response()->json(['message' => 'Test route is working!']);
 });
 
+// Route to handle email verification
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
     return response()->json(['message' => 'Email verified successfully.']);
 })->middleware(['auth:sanctum', 'signed'])->name('verification.verify');
 
+// Route to resend the verification email
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return response()->json(['message' => 'Verification email resent.']);
