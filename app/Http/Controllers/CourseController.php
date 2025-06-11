@@ -14,37 +14,37 @@ class CourseController extends Controller
         $this->middleware('course.enrolled')->only('show');
     }
     public function index(Request $request)
-{
-    $user = $request->user();
+    {
+        $user = $request->user();
 
-    $courses = Course::with([
-        'user',
-        'users' => function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        }
-    ])
-    ->withCount([
-        'users as enrolled_students_count' => function ($q) {
-            $q->where('is_accepted', true);
-        },
-        'users as pending_requests_count' => function ($q) {
-            $q->where('is_accepted', false);
-        },
-        'lessons'
-    ])
-    ->get()
-    ->map(function ($course) use ($user) {
-        $enrolledUser = $course->users->first();
+        $courses = Course::with([
+            'user',
+            'users' => function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }
+        ])
+            ->withCount([
+                'users as enrolled_students_count' => function ($q) {
+                    $q->where('is_accepted', true);
+                },
+                'users as pending_requests_count' => function ($q) {
+                    $q->where('is_accepted', false);
+                },
+                'lessons'
+            ])
+            ->get()
+            ->map(function ($course) use ($user) {
+                $enrolledUser = $course->users->first();
 
-        $course->is_student = $enrolledUser && $enrolledUser->pivot->is_accepted;
-        $course->is_requested = $enrolledUser && !$enrolledUser->pivot->is_accepted;
+                $course->is_student = $enrolledUser && $enrolledUser->pivot->is_accepted;
+                $course->is_requested = $enrolledUser && !$enrolledUser->pivot->is_accepted;
 
-        unset($course->users); // optional
-        return $course;
-    });
+                unset($course->users); // optional
+                return $course;
+            });
 
-    return response()->json($courses);
-}
+        return response()->json($courses);
+    }
 
 
     public function store(Request $request)
@@ -134,5 +134,30 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Student accepted successfully']);
     }
+
+    public function courseProgress(Course $course, Request $request)
+    {
+        $user = $request->user();
+
+        $totalLessons = $course->lessons()->count();
+
+        $completedLessons = $course->lessons()
+            ->whereHas('users', function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->where('status', 'completed');
+            })->count();
+
+        $progress = $totalLessons > 0
+            ? round(($completedLessons / $totalLessons) * 100, 2)
+            : 0;
+
+        return response()->json([
+            'course_id' => $course->id,
+            'progress' => $progress,
+            'completed' => $completedLessons,
+            'total' => $totalLessons,
+        ]);
+    }
+
 
 }

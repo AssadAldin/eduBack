@@ -54,5 +54,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Course::class)->withPivot('is_accepted')->withTimestamps();
     }
 
+    public function completedLessons()
+    {
+        return $this->belongsToMany(Lesson::class)->withPivot('status')->wherePivot('status', 'completed');
+    }
 
 }
