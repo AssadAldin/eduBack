@@ -36,13 +36,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/change-password', [UsersController::class, 'changePassword']);
 
     // Course management routes
-    // Add user to course and remove user from course routes
+    Route::apiResource('/users', UsersController::class);
+    Route::apiResource('courses', CourseController::class);
+    Route::apiResource('lessons', LessonsController::class);
+    // Add, accept user to course and remove user from course routes
     Route::post('/courses/{course}/add-user', [CourseController::class, 'addUserToCourse']);
     Route::post('/courses/{course}/remove-user', [CourseController::class, 'removeUserFromCourse']);
     Route::post('/courses/{course}/accept-student/{user}', [CourseController::class, 'acceptStudent']);
+    // Course progress route
+    Route::get('/courses/{course}/progress', [CourseController::class, 'courseProgress']);
+    // Media serving route
+    Route::get('/media/{filename}', [MediaController::class, 'serve']);
 });
 
-Route::middleware('auth:sanctum')->apiResource('/users', UsersController::class);
-Route::middleware('auth:sanctum')->apiResource('courses', CourseController::class);
-Route::middleware('auth:sanctum')->apiResource('lessons', LessonsController::class);
-Route::middleware('auth:sanctum')->get('/media/{filename}', [MediaController::class, 'serve']);
