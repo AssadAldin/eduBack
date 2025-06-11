@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\LessonProgressController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -45,9 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/courses/{course}/add-user', [CourseController::class, 'addUserToCourse']);
     Route::post('/courses/{course}/remove-user', [CourseController::class, 'removeUserFromCourse']);
     Route::post('/courses/{course}/accept-student/{user}', [CourseController::class, 'acceptStudent']);
-    // Course progress route
-    Route::get('/courses/{course}/progress', [CourseController::class, 'courseProgress']);
     // Media serving route
     Route::get('/media/{filename}', [MediaController::class, 'serve']);
+    // Course progress route
+    Route::get('/courses/{course}/progress', [LessonProgressController::class, 'courseProgress']);
+    Route::post('/lessons/{lesson}/complete', [LessonProgressController::class, 'complete']);
 });
-

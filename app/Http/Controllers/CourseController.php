@@ -135,29 +135,4 @@ class CourseController extends Controller
         return response()->json(['message' => 'Student accepted successfully']);
     }
 
-    public function courseProgress(Course $course, Request $request)
-    {
-        $user = $request->user();
-
-        $totalLessons = $course->lessons()->count();
-
-        $completedLessons = $course->lessons()
-            ->whereHas('users', function ($q) use ($user) {
-                $q->where('user_id', $user->id)
-                    ->where('status', 'completed');
-            })->count();
-
-        $progress = $totalLessons > 0
-            ? round(($completedLessons / $totalLessons) * 100, 2)
-            : 0;
-
-        return response()->json([
-            'course_id' => $course->id,
-            'progress' => $progress,
-            'completed' => $completedLessons,
-            'total' => $totalLessons,
-        ]);
-    }
-
-
 }
