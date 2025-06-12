@@ -18,7 +18,9 @@ class Lesson extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('status');
+        return $this->belongsToMany(User::class)
+            ->withPivot(['status', 'completed_at'])
+            ->withTimestamps();
     }
 
 }

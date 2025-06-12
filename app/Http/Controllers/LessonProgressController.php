@@ -36,10 +36,37 @@ class LessonProgressController extends Controller
     {
         $user = $request->user();
 
-        // Attach or update the lesson_user pivot with 'completed' status
-        $user->completedLessons()->syncWithoutDetaching([
-            $lesson->id => ['status' => 'completed', 'completed_at' => now()]
-        ]);
+        // Check if user is enrolled in the course
+        $course = $lesson->course;
+        $isEnrolled = $course->users()
+            ->where('user_id', $user->id)
+            ->wherePivot('is_accepted', true)
+            ->exists();
+
+        if (!$isEnrolled) {
+            return response()->json([
+                'message' => 'You are not enrolled in this course.'
+            ], 403);
+        }
+
+        // Check if the user already has a pivot record
+        $existing = $user->completedLessons()
+            ->where('lesson_id', $lesson->id)
+            ->first();
+
+        if ($existing) {
+            // Update the pivot record
+            $user->completedLessons()->updateExistingPivot($lesson->id, [
+                'status' => 'completed',
+                'completed_at' => now()
+            ]);
+        } else {
+            // Create a new pivot record
+            $user->completedLessons()->attach($lesson->id, [
+                'status' => 'completed',
+                'completed_at' => now()
+            ]);
+        }
 
         return response()->json([
             'message' => 'Lesson marked as completed.',
@@ -47,4 +74,20 @@ class LessonProgressController extends Controller
             'status' => 'completed'
         ]);
     }
+
+
+    public function removeCompletion(Lesson $lesson, Request $request)
+    {
+        $user = $request->user();
+
+        // Detach the lesson from the user's completed lessons
+        $user->completedLessons()->detach($lesson->id);
+
+        return response()->json([
+            'message' => 'Lesson marked as not completed.',
+            'lesson_id' => $lesson->id,
+            'status' => 'in_progress'
+        ]);
+    }
+
 }

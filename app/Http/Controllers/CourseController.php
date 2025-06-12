@@ -60,10 +60,29 @@ class CourseController extends Controller
         return response()->json($course, 201);
     }
 
-    public function show(Course $course)
+    public function show(Course $course, Request $request)
     {
-        $course->load('lessons');
+        $user = $request->user();
 
+        // Load lessons and attach completion status for current user
+        $course->load([
+            'lessons' => function ($query) use ($user) {
+                $query->with([
+                    'users' => function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    }
+                ]);
+            }
+        ]);
+
+        // Add is_completed flag to each lesson
+        $course->lessons->transform(function ($lesson) use ($user) {
+            $lesson->is_completed = $lesson->users->first()?->pivot->status === 'completed';
+            unset($lesson->users); // clean up if not needed in frontend
+            return $lesson;
+        });
+
+        // Map course users
         $users = $course->users()->get()->map(function ($user) {
             return [
                 'id' => $user->id,
@@ -78,6 +97,7 @@ class CourseController extends Controller
 
         return response()->json($course);
     }
+
 
 
     public function update(Request $request, Course $course)

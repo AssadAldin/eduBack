@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/user/change-password', [UsersController::class, 'changePassword']);
+    Route::post('/users/{user}/admin-change-password', [UsersController::class, 'changePasswordAsAdmin']);
+
 
     // Course management routes
     Route::apiResource('/users', UsersController::class);
@@ -51,4 +53,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // Course progress route
     Route::get('/courses/{course}/progress', [LessonProgressController::class, 'courseProgress']);
     Route::post('/lessons/{lesson}/complete', [LessonProgressController::class, 'complete']);
+    Route::delete('/lessons/{lesson}/complete', [LessonProgressController::class, 'removeCompletion']);
 });

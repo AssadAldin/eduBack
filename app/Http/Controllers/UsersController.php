@@ -102,4 +102,22 @@ class UsersController extends Controller
         return response()->json(['message' => 'Password updated successfully.'], 200);
     }
 
+    public function changePasswordAsAdmin(Request $request, User $user)
+    {
+        // Ensure the authenticated user is an admin
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden. Only admins can change passwords for other users.'], 403);
+        }
+
+        $request->validate([
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user->password = bcrypt($request->new_password);
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully for user ID ' . $user->id], 200);
+    }
+
+
 }
