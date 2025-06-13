@@ -23,6 +23,9 @@ class CourseController extends Controller
                 $q->where('user_id', $user->id);
             }
         ])
+            ->when($user->role !== 'admin', function ($query) {
+                $query->where('visible', true);
+            })
             ->withCount([
                 'users as enrolled_students_count' => function ($q) {
                     $q->where('is_accepted', true);
@@ -39,12 +42,13 @@ class CourseController extends Controller
                 $course->is_student = $enrolledUser && $enrolledUser->pivot->is_accepted;
                 $course->is_requested = $enrolledUser && !$enrolledUser->pivot->is_accepted;
 
-                unset($course->users); // optional
+                unset($course->users);
                 return $course;
             });
 
         return response()->json($courses);
     }
+
 
 
     public function store(Request $request)
@@ -53,6 +57,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'user_id' => 'required|exists:users,id',
+            'visible' => 'required|boolean',
         ]);
 
         $course = Course::create($validated);
@@ -106,6 +111,7 @@ class CourseController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
             'user_id' => 'sometimes|required|exists:users,id',
+            'visible' => 'sometimes|boolean',
         ]);
 
         $course->update($validated);
@@ -154,5 +160,22 @@ class CourseController extends Controller
 
         return response()->json(['message' => 'Student accepted successfully']);
     }
+
+    public function toggleVisibility(Request $request, Course $course)
+    {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden. Only admins can update visibility.'], 403);
+        }
+
+        $course->visible = !$course->visible;
+        $course->save();
+
+        return response()->json([
+            'message' => 'Course visibility updated.',
+            'course_id' => $course->id,
+            'visible' => $course->visible,
+        ]);
+    }
+
 
 }

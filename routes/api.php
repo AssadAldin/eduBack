@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UsersController::class);
     Route::apiResource('courses', CourseController::class);
     Route::apiResource('lessons', LessonsController::class);
+    Route::patch('/courses/{course}/toggle-visibility', [CourseController::class, 'toggleVisibility']);
     // Add, accept user to course and remove user from course routes
     Route::post('/courses/{course}/add-user', [CourseController::class, 'addUserToCourse']);
     Route::post('/courses/{course}/remove-user', [CourseController::class, 'removeUserFromCourse']);
