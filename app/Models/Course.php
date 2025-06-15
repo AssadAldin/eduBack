@@ -23,7 +23,7 @@ class Course extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('is_accepted')->withTimestamps();
+        return $this->belongsToMany(User::class)->withPivot(['is_accepted', 'accepted_at'])->withTimestamps();
     }
 
 }

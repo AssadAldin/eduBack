@@ -51,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function courses()
     {
-        return $this->belongsToMany(Course::class)->withPivot('is_accepted')->withTimestamps();
+        return $this->belongsToMany(Course::class)->withPivot(['is_accepted', 'accepted_at'])->withTimestamps();
     }
 
     public function completedLessons()

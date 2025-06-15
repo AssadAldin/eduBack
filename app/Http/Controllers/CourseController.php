@@ -94,7 +94,8 @@ class CourseController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'is_accepted' => $user->pivot->is_accepted,
-                'joined_at' => $user->pivot->created_at,
+                'accepted_at' => $user->pivot->accepted_at,
+                'created_at' => $user->pivot->created_at,
             ];
         });
 
