@@ -21,7 +21,7 @@ return new class extends Migration {
         });
 
         // Run the footer seeder after the table is created
-        (new FooterSeeder)->run();
+        // (new FooterSeeder)->run();
     }
 
     /**
