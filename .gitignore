@@ -17,6 +17,7 @@
 /public/hot
 /public/storage
 /public/error_log
+/public/react
 /storage/*.key
 /storage/pail
 /vendor
