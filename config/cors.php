@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://preview--learn-stream-course.lovable.app', 'http://localhost:8080'],
+    'allowed_origins' => ['https://drsarahassan.co.uk', 'http://localhost:8080'],
 
     'allowed_origins_patterns' => [],
 

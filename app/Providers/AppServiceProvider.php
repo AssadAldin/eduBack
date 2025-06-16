@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Customize verification email link
         VerifyEmail::createUrlUsing(function ($notifiable) {
-            $frontendUrl = config('app.frontend_url') ?? env('FRONTEND_URL', 'http://localhost:8080');
+            $frontendUrl = config('app.frontend_url') ?? env('FRONTEND_URL', 'https://drsarahassan.co.uk');
 
             $backendUrl = URL::temporarySignedRoute(
                 'verification.verify',
