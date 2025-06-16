@@ -21,6 +21,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+/backend.drsarahassan.co.uk
 Homestead.json
 Homestead.yaml
 npm-debug.log
