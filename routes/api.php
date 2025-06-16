@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FooterController;
 use App\Http\Controllers\LessonsController;
 use App\Http\Controllers\MediaController;
 use Illuminate\Http\Request;
@@ -55,4 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/courses/{course}/progress', [LessonProgressController::class, 'courseProgress']);
     Route::post('/lessons/{lesson}/complete', [LessonProgressController::class, 'complete']);
     Route::delete('/lessons/{lesson}/complete', [LessonProgressController::class, 'removeCompletion']);
+    // Footer management routes
+    Route::get('/footer', [FooterController::class, 'index']);
+    Route::put('/footer/{footer}', [FooterController::class, 'update']);
 });

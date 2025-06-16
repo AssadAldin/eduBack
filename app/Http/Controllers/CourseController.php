@@ -6,6 +6,7 @@ use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
+
 class CourseController extends Controller
 {
 
@@ -148,6 +149,7 @@ class CourseController extends Controller
         return response()->json(['message' => 'User removed from course.']);
     }
 
+
     public function acceptStudent(Request $request, Course $course, $userId)
     {
         // Ensure the user is already enrolled
@@ -157,7 +159,10 @@ class CourseController extends Controller
             return response()->json(['message' => 'User is not enrolled in this course'], 404);
         }
 
-        $course->users()->updateExistingPivot($userId, ['is_accepted' => true]);
+        $course->users()->updateExistingPivot($userId, [
+            'is_accepted' => true,
+            'accepted_at' => now()
+        ]);
 
         return response()->json(['message' => 'Student accepted successfully']);
     }
