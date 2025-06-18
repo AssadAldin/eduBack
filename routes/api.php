@@ -31,6 +31,7 @@ Route::post('/email/verification-notification', function (Request $request) {
     return response()->json(['message' => 'Verification email resent.']);
 })->middleware(['auth:sanctum', 'throttle:6,1']);
 
+// Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
