@@ -13,8 +13,12 @@ class UsersController extends Controller
 {
     public function index()
     {
-        return response()->json(User::all(), 200);
+        return response()->json(
+            User::where('id', '!=', 1)->get(),
+            200
+        );
     }
+
     // Show a single user
     public function show(User $user)
     {
